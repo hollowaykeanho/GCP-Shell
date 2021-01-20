@@ -4,14 +4,16 @@
 
 REGION="us-central1"
 ZONE="${REGION}-a"
+NETWORK="team-vps"
 
 
-TEMPLATE_NAME="lb-backend-template"
-TEMPLATE_NETWORK="default"
-TEMPLATE_SUBNET="default"
-TEMPLATE_TAGS="allow-health-check"
-TEMPLATE_IMAGE_FAMILY="debian-9"
-TEMPLATE_STARTUP_SCRIPT='#! /bin/bash
+LOAD_BALANCER_TEMPLATE_NAME="lb-backend-template"
+LOAD_BALANCER_TEMPLATE_NETWORK="$NETWORK"
+LOAD_BALANCER_TEMPLATE_IMAGE_MACHINE_TYPE="f1-micro"
+LOAD_BALANCER_TEMPLATE_IMAGE_FAMILY="debian-10"
+LOAD_BALANCER_TEMPLATE_IMAGE_PROJECT="debian-cloud"
+LOAD_BALANCER_TEMPLATE_TAGS="system1"
+LOAD_BALANCER_TEMPLATE_STARTUP_SCRIPT='#! /bin/bash
 apt-get update
 apt-get install apache2 -y
 a2ensite default-ssl
@@ -21,95 +23,98 @@ vm_hostname="$(curl -H "Metadata-Flavor:Google" \
 echo "Page served from: $vm_hostname" | tee /var/www/html/index.html
 systemctl restart apache2'
 
+LOAD_BALANCER_GROUP="lb-backend-group"
+LOAD_BALANCER_BASE_NAME="load-balancer"
+LOAD_BALANCER_SIZE="2"
 
-HTTP_LOAD_BALANCER_GROUP="lb-backend-group"
-HTTP_LOAD_BALANCER_SIZE="2"
-HTTP_LOAD_BALANCER_IP="lb-ipv4-1"
-HTTP_LOAD_BALANCER_IP_VERSION="IPV4"
-HTTP_LOAD_BALANCER_HEALTH_CHECK="http-basic-check"
-HTTP_LOAD_BALANCER_HEALTH_CHECK_PORT="80"
-HTTP_LOAD_BALANCER_BACKEND_SERVICE="web-backend-service"
-HTTP_LOAD_BALANCER_URL_MAP="web-map-http"
-HTTP_LOAD_BALANCER_PROXY="http-lb-proxy"
-HTTP_LOAD_BALANCER_FORWARDING_RULE="http-content-rule"
-HTTP_LOAD_BALANCER_PORT="80"
+LOAD_BALANCER_FIREWALL="lb-backend-firewall"
+LOAD_BALANCER_FIREWALL_NETWORK="$NETWORK"
+LOAD_BALANCER_FIREWALL_ACTION="allow"
+LOAD_BALANCER_FIREWALL_DIRECTION="ingress"
+LOAD_BALANCER_FIREWALL_SOURCE_RANGES="130.211.0.0/22,35.191.0.0/16"
+LOAD_BALANCER_FIREWALL_RULES="tcp:80"
 
+LOAD_BALANCER_NAMED_PORTS="http:80"
 
-FIREWALL_RULE="fw-allow-health-check"
-FIREWALL_NETWORK="default"
-FIREWALL_ACTION="allow"
-FIREWALL_DIRECTION="ingress"
-FIREWALL_SOURCE_RANGES="130.211.0.0/22,35.191.0.0/16"
-FIREWALL_TARGET_TAGS="allow-health-check"
-FIREWALL_RULES="tcp:80"
+LOAD_BALANCER_HEALTH_CHECK="http-basic-check"
+LOAD_BALANCER_HEALTH_CHECK_PORT="80"
+
+LOAD_BALANCER_BACKEND_SERVICE="web-backend-service"
+LOAD_BALANCER_BACKEND_SERVICE_PROTOCOL="HTTP"
+LOAD_BALANCER_BACKEND_SERVICE_PORT_NAME="http"
+LOAD_BALANCER_URL_MAP="web-map-http"
+LOAD_BALANCER_PROXY="http-lb-proxy"
+LOAD_BALANCER_FORWARDING_RULE="http-content-rule"
+LOAD_BALANCER_PORT="80"
+
 
 
 # 1. Create load balancer template
-gcloud compute instance-templates create "$TEMPLATE_NAME" \
-	--region="$REGION" \
-	--network="$TEMPLATE_NETWORK" \
-	--subnet="$TEMPLATE_SUBNET" \
-	--tags="$TEMPLATE_TAGS" \
-	--image-family="$TEMPLATE_IMAGE_FAMILY" \
+gcloud compute instance-templates create "$LOAD_BALANCER_TEMPLATE_NAME" \
+	--zone="$ZONE" \
+	--network="$LOAD_BALANCER_TEMPLATE_NETWORK" \
+	--machine-type="$LOAD_BALANCER_TEMPLATE_IMAGE_MACHINE_TYPE" \
+	--image-family="$LOAD_BALANCER_TEMPLATE_IMAGE_FAMILY" \
+	--image-project="$LOAD_BALANCER_TEMPLATE_IMAGE_PROJECT" \
+	--tags="$LOAD_BALANCER_TEMPLATE_TAGS" \
 	--metadata=startup-script="$TEMPLATE_STARTUP_SCRIPT"
 
 
-# 2. Create managed instance group from load balancer template
-gcloud compute instance-groups managed create "$HTTP_LOAD_BALANCER_GROUP" \
-	--template="$TEMPLATE_NAME" \
-	--size="$HTTP_LOAD_BALANCER_SIZE" \
+# 2. Create managed instance group
+gcloud compute instance-groups managed create "$LOAD_BALANCER_GROUP" \
+	--template "$LOAD_BALANCER_TEMPLATE_NAME" \
+	--base-instance-name "$LOAD_BALANCER_BASE_NAME" \
+	--size="$LOAD_BALANCER_SIZE" \
 	--zone="$ZONE"
 
 
 # 3. Setup ingress firewall rules
-gcloud compute firewall-rules create "$FIREWALL_RULE" \
-	--network="$FIREWALL_NETWORK" \
-	--action="$FIREWALL_ACTION" \
-	--direction="$FIREWALL_DIRECTION" \
-	--source-ranges="$FIREWALL_SOURCE_RANGES" \
-	--target-tags="$FIREWALL_TARGET_TAGS" \
-	--rules="$FIREWALL_RULES"
+gcloud compute firewall-rules create "$LOAD_BALANCER_FIREWALL" \
+	--network="$LOAD_BALANCER_FIREWALL_NETWORK" \
+	--action="$LOAD_BALANCER_FIREWALL_ACTION" \
+	--direction="$LOAD_BALANCER_FIREWALL_DIRECTION" \
+	--source-ranges="$LOAD_BALANCER_FIREWALL_SOURCE_RANGES" \
+	--rules="$LOAD_BALANCER_FIREWALL_RULES"
 
 
-# 4. Setup global static external IP
-gcloud compute addresses create "$HTTP_LOAD_BALANCER_IP" \
-	--ip-version="$HTTP_LOAD_BALANCER_IP_VERSION" \
-	--global
+# 4. Set named ports to instance group
+gcloud compute instance-groups managed set-named-ports "$LOAD_BALANCER_GROUP" \
+	--named-port "$LOAD_BALANCER_NAMED_PORTS" \
+	--zone="$ZONE"
 
 
 # 5. Create health check for load balancer
-gcloud compute health-checks create http "$HTTP_LOAD_BALANCER_HEALTH_CHECK" \
-	--port "$HTTP_LOAD_BALANCER_HEALTH_CHECK_PORT"
+gcloud compute http-health-checks create "$LOAD_BALANCER_HEALTH_CHECK" \
+	--port "$LOAD_BALANCER_HEALTH_CHECK_PORT"
 
 
 # 6. Create backend service
-gcloud compute backend-services create "$HTTP_LOAD_BALANCER_BACKEND_SERVICE" \
-	--protocol=HTTP \
-	--port-name=http \
-	--health-checks="$HTTP_LOAD_BALANCER_HEALTH_CHECK" \
+gcloud compute backend-services create "$LOAD_BALANCER_BACKEND_SERVICE" \
+	--protocol="$LOAD_BALANCER_BACKEND_SERVICE_PROTOCOL" \
+	--port-name="$LOAD_BALANCER_BACKEND_SERVICE_PORT_NAME" \
+	--health-checks="$LOAD_BALANCER_HEALTH_CHECK" \
 	--global
 
 
 # 7. Add backend service
-gcloud compute backend-services add-backend "$HTTP_LOAD_BALANCER_BACKEND_SERVICE" \
-	--instance-group="$HTTP_LOAD_BALANCER_GROUP" \
+gcloud compute backend-services add-backend "$LOAD_BALANCER_BACKEND_SERVICE" \
+	--instance-group="$LOAD_BALANCER_GROUP" \
 	--instance-group-zone="$ZONE" \
 	--global
 
 
 # 8. Create URL map route incoming request to default backend service
-gcloud compute url-maps create "$HTTP_LOAD_BALANCER_URL_MAP" \
-	--default-service "$HTTP_LOAD_BALANCER_BACKEND_SERVICE"
+gcloud compute url-maps create "$LOAD_BALANCER_URL_MAP" \
+	--default-service "$LOAD_BALANCER_BACKEND_SERVICE"
 
 
 # 9. Create target http proxy
-gcloud compute target-http-proxies create "$HTTP_LOAD_BALANCER_PROXY" \
-	--url-map "$HTTP_LOAD_BALANCER_URL_MAP"
+gcloud compute target-http-proxies create "$LOAD_BALANCER_PROXY" \
+	--url-map "$LOAD_BALANCER_URL_MAP"
 
 
 # 10. Create global forwarding rule to route incoming request to proxy
-gcloud compute forwarding-rules create "$HTTP_LOAD_BALANCER_FORWARDING_RULE" \
-	--address="$HTTP_LOAD_BALANCER_IP" \
+gcloud compute forwarding-rules create "$LOAD_BALANCER_FORWARDING_RULE" \
 	--global \
-	--target-http-proxy="$HTTP_LOAD_BALANCER_PROXY" \
-	--ports="$HTTP_LOAD_BALANCER_PORT"
+	--target-http-proxy="$LOAD_BALANCER_PROXY" \
+	--ports="$LOAD_BALANCER_PORT"

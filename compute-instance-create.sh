@@ -1,9 +1,11 @@
 #!/bin/bash
 
-ZONE="us-central1-a"
+REGION="us-central1"
+ZONE="${REGION}-a"
 
 NAME="www1"
-TAG="network-1b-tag"
+NETWORK="team-vpc"
+TAG="function1"
 IMAGE_FAMILY="debian-9"
 IMAGE_PROJECT="debian-cloud"
 STARTUP_SCRIPT="#! /bin/bash
@@ -18,6 +20,7 @@ echo '<!doctype html><html><body><h1>${NAME}</h1></body></html>' \
 gcloud compute instances create "$NAME" \
 	--image-family "$IMAGE_FAMILY" \
 	--image-project "$IMAGE_PROJECT" \
+	--network "$NETWORK" \
 	--zone "$ZONE" \
 	--tags "$TAG" \
 	--metadata startup-script="$STARTUP_SCRIPT"
