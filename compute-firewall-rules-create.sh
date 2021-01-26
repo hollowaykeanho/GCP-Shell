@@ -7,7 +7,7 @@ ACTION="ALLOW"
 RULES="tcp:22,tcp:3389,icmp"
 SOURCE_RANGES="0.0.0.0/0"
 PRIORITY="1000"
-PROJECT="qwiklabs-gcp-00-1cc9fe3b3f13"
+PROJECT="qwiklabs-gcp-00-1cc9fe3b3f13"  # optional argument
 
 
 # create new firewall rule

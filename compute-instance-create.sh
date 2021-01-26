@@ -32,9 +32,8 @@ gcloud compute instances create "$NAME" \
 	--machine-type "$MACHINE_TYPE" \
 	--image-family "$IMAGE_FAMILY" \
 	--image-project "$IMAGE_PROJECT" \
-	--network "$NETWORK" \
+	--network-interface "network=${NETWORK},subnet=${SUBNET}" \
 	--network-tier "$NETWORK_TIER" \
-	--subnet "$SUBNET" \
 	--boot-disk-size "$DISK_SIZE" \
 	--boot-disk-type "$DISK_TYPE" \
 	--boot-disk-device-name "$DISK_NAME" \
