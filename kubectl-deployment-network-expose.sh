@@ -9,7 +9,8 @@ CLUSTER_NETWORK_PORT="8080"
 # (See container-clusters-get-credentials.sh)
 
 
-# 2. Expose Google Container's cluster's external IP
+# 2. Expose Google Container's cluster's external IP by creating its external
+#    load balancer.
 kubectl expose deployment "$CLUSTER" \
 	--type="$CLUSTER_NETWORK_TYPE" \
 	--port="$CLUSTER_NETWORK_PORT"
