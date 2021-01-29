@@ -1,0 +1,48 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: valkyrie-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: valkyrie-app
+  template:
+    metadata:
+      name: valkyrie-app
+      labels:
+        app: valkyrie-app
+        role: frontend-backend
+        env: dev
+    spec:
+      containers:
+      - name: backend
+        image: gcr.io/qwiklabs-gcp-04-ebd4acec3321/valkyrie-app:v0.0.1
+        resources:
+          limits:
+            memory: "500Mi"
+            cpu: "100m"
+        imagePullPolicy: Always
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+        command: ["app","-port=8080"]
+        ports:
+        - name: backend
+          containerPort: 8080
+      - name: frontend
+        image: gcr.io/qwiklabs-gcp-04-ebd4acec3321/valkyrie-app:v0.0.1
+        resources:
+          limits:
+            memory: "500Mi"
+            cpu: "100m"
+        imagePullPolicy: Always
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+        command: ["app","-frontend=true","-backend-service=http://127.0.0.1:8080","-port=80"]
+        ports:
+        - name: frontend
+          containerPort: 80
