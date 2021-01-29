@@ -59,7 +59,8 @@ for i in k8s/*; do kubectl create -f "$i"; done
 
 
 # update deployment with scale and new codes
-kubectl scale deployment "$PROJECT" --replicas 3
+sed -i "s/replicas: 1/replicas: 3/g" ./k8s/deployment.yaml
+kubectl apply -f ./k8s/deployment.yaml
 
 ## merge kurt-dev to master
 git merge origin/kurt-dev
