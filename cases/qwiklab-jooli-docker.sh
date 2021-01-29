@@ -59,8 +59,8 @@ for i in k8s/*; do kubectl create -f "$i"; done
 
 
 # update deployment with scale and new codes
-sed -i "s/replicas: 1/replicas: 3/g" ./k8s/deployment.yaml
-kubectl apply -f ./k8s/deployment.yaml
+gcloud edit deployment valkyrie-dev
+## update replicas: 1 --> replicas: 3
 
 ## merge kurt-dev to master
 git merge origin/kurt-dev
@@ -72,9 +72,8 @@ docker build -t "${PROJECT_NAME}:${PROJECT_TAG}" .
 docker tag "${PROJECT_NAME}:${PROJECT_TAG}" "$PROJECT_URL"
 docker images
 docker push "$PROJECT_URL"
-sed -i "s/v0.0.1/${PROJECT_TAG}/g" ./k8s/deployment.yaml
-kubectl apply -f ./k8s/deployment.yaml
-
+gcloud edit deployment valkyrie-dev
+## update image URL from v0.0.1 --> v0.0.2
 
 
 
