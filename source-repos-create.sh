@@ -8,7 +8,11 @@ export PROJECT=$(gcloud info --format='value(config.project)')
 gcloud source repos create "$NAME"
 
 
-# 2. initialize git repo
+# 2. clone the source repo
+## See: source-repos-clone.sh
+
+
+# 3. initialize git repo and proceed like git
 cd ./"$NAME"
 git config credential.helper gcloud.sh
 git remote add origin https://source.developers.google.com/p/$PROJECT/r/$NAME
