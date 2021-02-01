@@ -11,4 +11,7 @@ These are recipes compiled by many profressionals to create some great outcome.
 While they can't be directly integrated into this repository, it is great to
 link them up in case anyone wants to refer to it in the future.
 
-1. Manual GKE handling - https://github.com/GoogleCloudPlatform/gke-migration-to-containers.git
+1. Manual GKE handling -
+   https://github.com/GoogleCloudPlatform/gke-migration-to-containers.git
+2. GKE Network Policying -
+   https://github.com/GoogleCloudPlatform/gke-network-policy-demo.git
