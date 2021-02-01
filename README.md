@@ -15,3 +15,5 @@ link them up in case anyone wants to refer to it in the future.
    https://github.com/GoogleCloudPlatform/gke-migration-to-containers.git
 2. GKE Network Policying -
    https://github.com/GoogleCloudPlatform/gke-network-policy-demo.git
+3. GKE RBAC IAM -
+   https://github.com/GoogleCloudPlatform/gke-rbac-demo.git
