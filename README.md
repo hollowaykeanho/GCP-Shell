@@ -17,3 +17,5 @@ link them up in case anyone wants to refer to it in the future.
    https://github.com/GoogleCloudPlatform/gke-network-policy-demo.git
 3. GKE RBAC IAM -
    https://github.com/GoogleCloudPlatform/gke-rbac-demo.git
+4. GKE Securing Application -
+   https://github.com/GoogleCloudPlatform/gke-security-scenarios-demo
