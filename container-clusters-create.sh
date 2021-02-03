@@ -14,4 +14,5 @@ gcloud container clusters create "$CLUSTER" \
 	--zone "$ZONE" \
 	--num-nodes "$CLUSTER_NODES" \
 	--network "$CLUSTER_NETWORK" \
-	--machine-type "$CLUSTER_MACHINE_TYPE"
+	--machine-type "$CLUSTER_MACHINE_TYPE" \
+	--enable-network-policy

@@ -8,7 +8,7 @@ SQL_TIER="db-n1-standard-1"
 
 # create cloud SQL instance (4 spaces in front is needed as we are entering
 # root password here to prevent being captured by history log)
-    gcloud sql instances create "$SQL" \
+gcloud sql instances create "$SQL" \
 	--availability-type="$SQL_AVAILABILITY" \
 	--backup \
 	--database-version "$SQL_VERSION" \
