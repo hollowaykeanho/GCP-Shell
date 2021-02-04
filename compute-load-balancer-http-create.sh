@@ -1,11 +1,32 @@
 #!/bin/bash
+#
+# Copyright 2021 "Holloway" Chew, Kean Ho <hollowaykeanho@gmail.com>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+
+
 
 # Create Google Front End (GFE) HTTP load balancer
-
 REGION="us-central1"
 ZONE="${REGION}-a"
 NETWORK="team-vps"
-
 
 LOAD_BALANCER_TEMPLATE_NAME="lb-backend-template"
 LOAD_BALANCER_TEMPLATE_NETWORK="$NETWORK"
@@ -49,6 +70,7 @@ LOAD_BALANCER_PORT="80"
 
 
 
+
 # 1. Create load balancer template
 gcloud compute instance-templates create "$LOAD_BALANCER_TEMPLATE_NAME" \
 	--zone="$ZONE" \
@@ -60,12 +82,16 @@ gcloud compute instance-templates create "$LOAD_BALANCER_TEMPLATE_NAME" \
 	--metadata=startup-script="$TEMPLATE_STARTUP_SCRIPT"
 
 
+
+
 # 2. Create managed instance group
 gcloud compute instance-groups managed create "$LOAD_BALANCER_GROUP" \
 	--template "$LOAD_BALANCER_TEMPLATE_NAME" \
 	--base-instance-name "$LOAD_BALANCER_BASE_NAME" \
 	--size="$LOAD_BALANCER_SIZE" \
 	--zone="$ZONE"
+
+
 
 
 # 3. Setup ingress firewall rules
@@ -77,15 +103,21 @@ gcloud compute firewall-rules create "$LOAD_BALANCER_FIREWALL" \
 	--rules="$LOAD_BALANCER_FIREWALL_RULES"
 
 
+
+
 # 4. Set named ports to instance group
 gcloud compute instance-groups managed set-named-ports "$LOAD_BALANCER_GROUP" \
 	--named-port "$LOAD_BALANCER_NAMED_PORTS" \
 	--zone="$ZONE"
 
 
+
+
 # 5. Create health check for load balancer
 gcloud compute http-health-checks create "$LOAD_BALANCER_HEALTH_CHECK" \
 	--port "$LOAD_BALANCER_HEALTH_CHECK_PORT"
+
+
 
 
 # 6. Create backend service
@@ -96,6 +128,8 @@ gcloud compute backend-services create "$LOAD_BALANCER_BACKEND_SERVICE" \
 	--global
 
 
+
+
 # 7. Add backend service
 gcloud compute backend-services add-backend "$LOAD_BALANCER_BACKEND_SERVICE" \
 	--instance-group="$LOAD_BALANCER_GROUP" \
@@ -103,14 +137,20 @@ gcloud compute backend-services add-backend "$LOAD_BALANCER_BACKEND_SERVICE" \
 	--global
 
 
+
+
 # 8. Create URL map route incoming request to default backend service
 gcloud compute url-maps create "$LOAD_BALANCER_URL_MAP" \
 	--default-service "$LOAD_BALANCER_BACKEND_SERVICE"
 
 
+
+
 # 9. Create target http proxy
 gcloud compute target-http-proxies create "$LOAD_BALANCER_PROXY" \
 	--url-map "$LOAD_BALANCER_URL_MAP"
+
+
 
 
 # 10. Create global forwarding rule to route incoming request to proxy

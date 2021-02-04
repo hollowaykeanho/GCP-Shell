@@ -324,6 +324,7 @@ gcloud container clusters update "$CLUSTER" --zone "$ZONE" --enable-binauthz
 
 
 
+
 # setup pod security policy
 ## set role
 cat << EOF | kubectl apply -f -
