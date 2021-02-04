@@ -6,6 +6,17 @@ can re-use them whenever needed.
 
 
 
+## How Did They Got Produced
+By directly pariticating and fulfills QwikLab training labs and challenge lab.
+From top to bottom, Qwiklab did prepares quite a good self-pace, developer
+oriented labs.
+
+To fulfill their challenges, you need to build up your own notes and construct
+your answer accordingly.
+
+
+
+
 ## Self-Service Repositories
 These are recipes compiled by many profressionals to create some great outcome.
 While they can't be directly integrated into this repository, it is great to
