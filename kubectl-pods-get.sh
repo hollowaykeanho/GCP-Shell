@@ -33,3 +33,9 @@ kubectl get pods -o jsonpath \
 # get by label
 LABEL="app=monolith"
 kubectl get pods -l "$LABEL"
+
+
+
+
+# get and present wide output
+kubectl get pods -o=wide

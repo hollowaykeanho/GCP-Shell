@@ -20,11 +20,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-DEPLOYMENT="deployment/prime-server"
-REPLICAS="3"
+ZONE="us-central1-a"
+CLUSTER="hello-demo-cluster"
+NODE="node"
+TOTAL_NODES="3"
 
 
 
 
-# scale the replica
-kubectl scale deployment "$DEPLOYMENT" --replicas "$REPLICAS"
+# delete a node pool
+gcloud container clusters resize "$CLUSTER" \
+	--node-pool "$NODE" \
+	--num-nodes "$TOTAL_NODES" \
+	--zone "$ZONE"

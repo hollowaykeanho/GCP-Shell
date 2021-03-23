@@ -20,11 +20,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-DEPLOYMENT="deployment/prime-server"
-REPLICAS="3"
+NODE="node"
+NODES="$(kubectl get nodes -l cloud.google.com/gke-nodepool="$NODE" -o=name)"
+
+# create the new optimized pool
+## See container-note-pools-create.sh for more info
 
 
 
 
-# scale the replica
-kubectl scale deployment "$DEPLOYMENT" --replicas "$REPLICAS"
+# cordon the existing pool
+for i in $NODES; do
+	kubectl cordon "$i"
+done
