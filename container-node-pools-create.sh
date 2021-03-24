@@ -20,16 +20,20 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-DEPLOYMENT="php-apache"
-CPU_PERCENT="50%"
-MIN_PODS="1"
-MAX_PODS="10"
+ZONE="us-central-1"
+POOL="second-pool"
+CLUSTER="simplecluster"
+NUM_NODES="1"
+MACHINE_TYPE="n1-standard-2"
 
 
 
 
-# autoscaling a deployment
-kubectl autoscale deployment "$DEPLOYMENT" \
-	--cpu-percent="$CPU_PERCENT" \
-	--min="$MIN_PODS" \
-	--max="$MAX_PODS"
+# creates contained secured pool
+gcloud container node-pools create "$POOL" \
+	--zone "$ZONE" \
+	--cluster "$CLUSTER"
+	--num-nodes "$NUM_NODES" \
+	--machine-type "$MACHINE_TYPE" \
+	--metadata=disable-legacy-endpoints=true \
+	--workload-metadata-from-node=SECURE

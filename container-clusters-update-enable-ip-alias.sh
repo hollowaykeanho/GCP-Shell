@@ -20,44 +20,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-ZONE="us-central1-a"
-CLUSTER="hello-demo-cluster"
-NODE="node"
-NODES="$(kubectl get nodes -l cloud.google.com/gke-nodepool="$NODE" -o=name)"
-
-# create the new optimized pool
-## See container-note-pools-create.sh for more info
+ZONE="us-central1-b"
+CLUSTER="my-cluster"
 
 
 
 
-# cordon the existing pool
-for i in $NODES; do
-	kubectl cordon "$i"
-done
-
-
-
-
-# drain the existing pool
-for i in $NODES; do
-	kubectl drain --force \
-		--ignore-daemonsets \
-		--delete-local-data \
-		--grace-period=10 \
-		"$i"
-done
-
-
-
-
-# check all pods are running on new optimized pool
-kubectl get pods -o=wide
-
-
-
-
-# delete the retired pool
-gcloud container node-pools delete "$NODE" \
-	--cluster "$CLUSTER" \
-	--zone "$ZONE"
+# create Google container clusters
+gcloud container clusters update "$CLUSTER" \
+	--zone "$ZONE" \
+	--enable-ip-alias

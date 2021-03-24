@@ -20,19 +20,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-ZONE="us-central-1"
+NODE="node"
+NODES="$(kubectl get nodes -l cloud.google.com/gke-nodepool="$NODE" -o=name)"
 
-POOL="second-pool"
-CLUSTER="simplecluster"
-NUM_NODES="1"
-
-
+# create the new optimized pool
+## See container-note-pools-create.sh for more info
 
 
-# creates contained secured pool
-gcloud beta container node-pools create "$POOL" \
-	--zone=$MY_ZONE \
-	--cluster="$CLUSTER" \
-	--num-nodes="$NUM_NODES" \
-	--metadata=disable-legacy-endpoints=true \
-	--workload-metadata-from-node=SECURE
+
+
+# uncordon the existing pool
+for i in $NODES; do
+	kubectl uncordon "$i"
+done

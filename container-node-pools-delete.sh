@@ -22,12 +22,12 @@
 
 ZONE="us-central1-a"
 CLUSTER="hello-demo-cluster"
-NODE="node"
+POOL="node"
 
 
 
 
 # delete a node pool
-gcloud container node-pools delete "$NODE" \
+gcloud container node-pools delete "$POOL" \
 	--cluster "$CLUSTER" \
 	--zone "$ZONE"

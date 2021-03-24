@@ -20,10 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-NAME="production"
+NAMESPACE="production"
 
 
 
 
 # create a new kubernetes namespace
-kubectl create ns "$NAME"
+kubectl create namespace "$NAMESPACE"

@@ -20,11 +20,18 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-DEPLOYMENT="deployment/prime-server"
-REPLICAS="3"
+REGION="us-central1"
+ZONE="${REGION}-b"
+CLUSTER="my-cluster"
+MIN_NODES="1"
+MAX_NODES="6"
 
 
 
 
-# scale the replica
-kubectl scale deployment "$DEPLOYMENT" --replicas "$REPLICAS"
+# create Google container clusters
+gcloud container clusters update "$CLUSTER" \
+	--zone "$ZONE" \
+	--enable-autoscaling \
+	--min-nodes "$MIN_NODES" \
+	--max-nodes "$MAX_NODES"

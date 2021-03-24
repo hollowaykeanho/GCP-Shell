@@ -20,16 +20,44 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-DEPLOYMENT="php-apache"
-CPU_PERCENT="50%"
-MIN_PODS="1"
-MAX_PODS="10"
+ZONE="us-central1-a"
+CLUSTER="hello-demo-cluster"
+POOL="default-pool"
+NODES="$(kubectl get nodes -l cloud.google.com/gke-nodepool="$POOL" -o=name)"
+
+# create the new optimized pool
+## See container-node-pools-create.sh
 
 
 
 
-# autoscaling a deployment
-kubectl autoscale deployment "$DEPLOYMENT" \
-	--cpu-percent="$CPU_PERCENT" \
-	--min="$MIN_PODS" \
-	--max="$MAX_PODS"
+# cordon the existing pool
+for i in $NODES; do
+	kubectl cordon "$i"
+done
+
+
+
+
+# drain the existing pool
+for i in $NODES; do
+	kubectl drain --force \
+		--ignore-daemonsets \
+		--delete-local-data \
+		--grace-period=10 \
+		"$i"
+done
+
+
+
+
+# check all pods are running on new optimized pool
+kubectl get pods -o=wide
+
+
+
+
+# delete the retired pool
+gcloud container node-pools delete "$POOL" \
+	--cluster "$CLUSTER" \
+	--zone "$ZONE"

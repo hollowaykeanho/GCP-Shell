@@ -28,3 +28,9 @@ JSON_PATH="{.status.loadBalancer.ingress[0].ip}"
 
 # get scv data
 kubectl get svc "$NAME" -o=jsonpath="$JSON_PATH"
+
+
+
+
+# streaming all services in a namespace
+kubectl get svc -w --all-namespaces

@@ -20,11 +20,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-NAME="hello"
-REPLICAS="5"
+DEPLOYMENT="deployment/prime-server"
+REPLICAS="3"
 
 
 
 
-# scale the deployment
-kubectl scale deployment "$NAME" "$REPLICAS"
+# scale the replica
+kubectl scale deployment "$DEPLOYMENT" --replicas "$REPLICAS"

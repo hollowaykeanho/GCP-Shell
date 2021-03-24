@@ -24,9 +24,6 @@ REGION="us-central1"
 ZONE="${REGION}-b"
 
 CLUSTER="my-cluster"
-CLUSTER_NODES="2"
-CLUSTER_NETWORK="team-vpc"
-CLUSTER_MACHINE_TYPE="n1-standard-4"
 
 
 
