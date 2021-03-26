@@ -30,3 +30,5 @@ link them up in case anyone wants to refer to it in the future.
    https://github.com/GoogleCloudPlatform/gke-rbac-demo.git
 4. GKE Securing Application -
    https://github.com/GoogleCloudPlatform/gke-security-scenarios-demo
+5. AI Training Intro - See `self-paced-lab/ai-platform-qwikstart` -
+   https://github.com/GoogleCloudPlatform/training-data-analyst
