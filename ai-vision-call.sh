@@ -26,7 +26,7 @@ IMAGE_URI="gs://qwiklabs-gcp-02-894dc33eec85/sign.jpg"
 
 
 
-# call vision API
+# call vision API to identify text
 curl --silent -request POST \
 	--header "Content-Type: application/json" \
 	--data-binary @- \
@@ -43,6 +43,140 @@ curl --silent -request POST \
           {
             "type": "TEXT_DETECTION",
             "maxResults": 10
+          }
+        ]
+      }
+  ]
+}
+EOF
+
+
+
+
+# call vision API to identify label
+curl --silent -request POST \
+	--header "Content-Type: application/json" \
+	--data-binary @- \
+	"https://vision.googleapis.com/v1/images:annotate?key=${API_KEY}" << EOF
+{
+  "requests": [
+      {
+        "image": {
+          "source": {
+              "gcsImageUri": "$IMAGE_URI"
+          }
+        },
+        "features": [
+          {
+            "type": "LABEL_DETECTION",
+            "maxResults": 10
+          }
+        ]
+      }
+  ]
+}
+EOF
+
+
+
+
+# call vision API to perform web search using image
+curl --silent -request POST \
+	--header "Content-Type: application/json" \
+	--data-binary @- \
+	"https://vision.googleapis.com/v1/images:annotate?key=${API_KEY}" << EOF
+{
+  "requests": [
+      {
+        "image": {
+          "source": {
+              "gcsImageUri": "$IMAGE_URI"
+          }
+        },
+        "features": [
+          {
+            "type": "WEB_DETECTION",
+            "maxResults": 10
+          }
+        ]
+      }
+  ]
+}
+EOF
+
+
+
+
+# call vision API to perform face detection
+curl --silent -request POST \
+	--header "Content-Type: application/json" \
+	--data-binary @- \
+	"https://vision.googleapis.com/v1/images:annotate?key=${API_KEY}" << EOF
+{
+  "requests": [
+      {
+        "image": {
+          "source": {
+              "gcsImageUri": "$IMAGE_URI"
+          }
+        },
+        "features": [
+          {
+            "type": "FACE_DETECTION",
+            "maxResults": 10,
+          }
+        ]
+      }
+  ]
+}
+EOF
+
+
+
+
+# call vision API to perform landmark detection
+curl --silent -request POST \
+	--header "Content-Type: application/json" \
+	--data-binary @- \
+	"https://vision.googleapis.com/v1/images:annotate?key=${API_KEY}" << EOF
+{
+  "requests": [
+      {
+        "image": {
+          "source": {
+              "gcsImageUri": "$IMAGE_URI"
+          }
+        },
+        "features": [
+          {
+            "type": "LANDMARK_DETECTION",
+            "maxResults": 10,
+          }
+        ]
+      }
+  ]
+}
+EOF
+
+
+
+
+# call vision API to perform logo detection
+curl --silent -request POST \
+	--header "Content-Type: application/json" \
+	--data-binary @- \
+	"https://vision.googleapis.com/v1/images:annotate?key=${API_KEY}" << EOF
+{
+  "requests": [
+      {
+        "image": {
+          "source": {
+              "gcsImageUri": "$IMAGE_URI"
+          }
+        },
+        "features": [
+          {
+            "type": "SAFE_SEARCH_DETECTION"
           }
         ]
       }
