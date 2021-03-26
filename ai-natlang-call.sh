@@ -29,7 +29,7 @@ DOC_ENCODING="UTF8"
 
 
 
-# call translate API
+# call translate API to analyze
 curl --silent -request POST \
 	--header "Content-Type: application/json" \
 	--data-binary @- \
@@ -40,5 +40,22 @@ curl --silent -request POST \
     "content":"$DOC_CONTENT"
   },
   "encodingType":"$DOC_ENCODING"
+}
+EOF
+
+
+
+
+# call translate API to categorize / to classify
+DOC_CONTENT="A Smoky Lobster Salad With a Tapa Twist. This spin on the Spanish pulpo a la gallega skips the octopus, but keeps the sea salt, olive oil, pimentón and boiled potatoes."
+curl --silent -request POST \
+	--header "Content-Type: application/json" \
+	--data-binary @- \
+	"https://language.googleapis.com/v1/documents:classifyText?key=${API_KEY}" << EOF
+{
+  "document":{
+    "type":"PLAIN_TEXT",
+    "content":"$DOC_CONTENT"
+  }
 }
 EOF
