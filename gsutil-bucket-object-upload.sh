@@ -25,5 +25,21 @@ BUCKET="gs://my-own-bucket-1231123"
 
 
 
-# upload a file to Google Storage bucket
+# upload by gsutil
 gsutil cp ada.jpg "$BUCKET"/.
+
+
+
+
+# upload by REST
+OAUTH2_TOKEN="access-token" # obtain from credentials or OAUTH2 login
+OBJECT="/home/gcpstaging25084_student/demo-image.png"
+OBJECT_CONTENT_TYPE="image/png"
+API="https://www.googleapis.com/upload/storage/v1/b"
+TARGET_FILENAME="demo-image"
+
+curl --request POST \
+	--data-binary @"$OBJECT" \
+	--header "Authorization: Bearer $OAUTH2_TOKEN" \
+	--header "Content-Type: $OBJECT_CONTENT_TYPE" \
+	"${API}/${BUCKET}/o?uploadType=media&name=${TARGET_FILENAME}"

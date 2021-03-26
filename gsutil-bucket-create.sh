@@ -29,6 +29,23 @@ PROJECT_ID="Your-Project-ID"
 
 
 
-# create bucket
+# create by gsutils
 # gsutil mb gs://YOUR-NAME-HERE
 gsutil mb "$BUCKET" -c "$CLASS" -l "$LOCATION" -p "$PROJECT_ID" #--retention "$RETENTION"
+
+
+
+
+# create by REST
+OAUTH2_TOKEN="access-token" # obtain from credentials or OAUTH2 login
+PROJECT_ID="$(gcloud config get-value project)" # or just fill in yourself
+
+curl --request POST \
+	--header "Authorization: Bearer $OAUTH2_TOKEN" \
+	--header "Content-Type: application/json" \
+	--data-binary @- \
+	"https://www.googleapis.com/storage/v1/b?project=$PROJECT_ID" << EOF
+   "name": "${BUCKET#*//}",
+   "location": "$LOCATION",
+   "storageClass": "$CLASS"
+EOF
