@@ -68,7 +68,7 @@ gcloud dataproc clusters create "$CLUSTER" \
 
 # Task 4
 ## AI - speech
-export RESULT_FILE="task4-cnl.result"
+export RESULT_FILE="task4-gcs.result"
 export FILE_URI="gs://cloud-training/gsp323/task4.flac"
 curl --silent --request POST \
 	--header "Content-Type: application/json" \
@@ -87,7 +87,8 @@ curl --silent --request POST \
 EOF
 
 ### copy into bucket
-gsutil cp "$RESULT_FILE" "gs://${PROJECT}-marking/${RESULT_FILE}"
+gsutil -h "Content-Type:application/json" \
+	cp "$RESULT_FILE" "gs://${PROJECT}-marking/${RESULT_FILE}"
 cloudshell download "$RESULT_FILE"
 
 
@@ -97,7 +98,8 @@ export CONTENT="Old Norse texts portray Odin as one-eyed and long-bearded, frequ
 gcloud ml language analyze-entities --content="$CONTENT" > "$RESULT_FILE"
 
 ### copy into bucket
-gsutil cp "$RESULT_FILE" "gs://${PROJECT}-marking/${RESULT_FILE}"
+gsutil -h "Content-Type:application/json" \
+	cp "$RESULT_FILE" "gs://${PROJECT}-marking/${RESULT_FILE}"
 cloudshell download "$RESULT_FILE"
 
 
@@ -133,5 +135,6 @@ curl --silent \
 	> "$RESULT_FILE"
 
 ### copy into bucket
-gsutil cp "$RESULT_FILE" "gs://${PROJECT}-marking/${RESULT_FILE}"
+gsutil -h "Content-Type:application/json" \
+	cp "$RESULT_FILE" "gs://${PROJECT}-marking/${RESULT_FILE}"
 cloudshell download "$RESULT_FILE"
