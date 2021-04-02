@@ -1,5 +1,5 @@
 # CONTRIBUTING GUIDELINES
-First and foremose, thanks for your interest in contributing to this repository.
+First and foremost, thanks for your interest in contributing to this repository.
 This section lists out all the guidelines for having a smooth upstream.
 
 
