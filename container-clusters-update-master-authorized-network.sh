@@ -20,35 +20,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-REGION="us-central1"
-ZONE="${REGION}-b"
-
+ZONE="us-central1-b"
 CLUSTER="my-cluster"
-CLUSTER_NODES="2"
-CLUSTER_NETWORK="team-vpc"
-CLUSTER_MACHINE_TYPE="n1-standard-4"
+CLUSTER_EXTERNAL_NETWORK_RANGE="34.72.149.117/32"
 
 
 
 
-# create basic cluster
-gcloud container clusters create "$CLUSTER" \
+# update cluster to have master authorized network
+gcloud container clusters update "$CLUSTER" \
 	--zone "$ZONE" \
-	--num-nodes "$CLUSTER_NODES" \
-	--network "$CLUSTER_NETWORK" \
-	--machine-type "$CLUSTER_MACHINE_TYPE" \
-	--enable-network-policy  # OPTIONAL
-
-
-
-
-# create Google container private cluster
-gcloud container clusters create "$CLUSTER" \
-	--zone "$ZONE" \
-	--num-nodes "$CLUSTER_NODES" \
-	--network "$CLUSTER_NETWORK" \
-	--machine-type "$CLUSTER_MACHINE_TYPE" \
-	--enable-private-nodes \
-	--enable-network-policy \
-	--enable-ip-alias \
-	--create-subnetwork ""
+	--enable-master-authorized-networks \
+	--master-authorized-networks "$CLUSTER_EXTERNAL_NETWORK_RANGE"
