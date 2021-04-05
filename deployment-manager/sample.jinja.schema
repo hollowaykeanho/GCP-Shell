@@ -1,0 +1,12 @@
+info:
+  title: Deploy a Simple VM
+  author: qwiklabs@google.com
+
+required:
+  - zone
+
+properties:
+  zone:
+    description: Zone to create the resources in.
+    type: string
+

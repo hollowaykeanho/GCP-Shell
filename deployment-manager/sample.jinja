@@ -1,0 +1,50 @@
+resources:
+- type: compute.v1.instance
+  name: vm-test
+  properties:
+    zone: {{ properties["zone"] }}
+    machineType: https://www.googleapis.com/compute/v1/projects/{{ env["project"] }}/zones/{{ properties["zone"] }}/machineTypes/f1-micro
+    disks:
+    - deviceName: boot
+      type: PERSISTENT
+      boot: true
+      autoDelete: true
+      initializeParams:
+        diskName: disk-{{ env["deployment"] }}
+        sourceImage: https://www.googleapis.com/compute/v1/projects/debian-cloud/global/images/family/debian-9
+    networkInterfaces:
+    - network: https://www.googleapis.com/compute/v1/projects/{{ env["project"] }}/global/networks/default
+      accessConfigs:
+      - name: External NAT
+        type: ONE_TO_ONE_NAT
+    metadata:
+      items:
+      - key: startup-script
+        value: |
+          #!/bin/bash
+          apt-get update
+          apt-get install -y apache2
+    tags:
+      items:
+      - http
+    serviceAccounts:
+    - email: qwiklabs-gcp-00-085ac82b8d3d@qwiklabs-gcp-00-085ac82b8d3d.iam.gserviceaccount.com
+      scopes:
+      - https://www.googleapis.com/auth/devstorage.read_only
+      - https://www.googleapis.com/auth/logging.write
+      - https://www.googleapis.com/auth/monitoring.write
+      - https://www.googleapis.com/auth/servicecontrol
+      - https://www.googleapis.com/auth/service.management.readonly
+      - https://www.googleapis.com/auth/trace.append
+- type: compute.v1.firewall
+  name: default-allow-http
+  properties:
+    network: https://www.googleapis.com/compute/v1/projects/{{ env["project"] }}/global/networks/default
+    targetTags: 
+    - http
+    sourceRanges: 
+    - 0.0.0.0/0
+    allowed:
+    - IPProtocol: TCP
+      ports: 
+      - 80
