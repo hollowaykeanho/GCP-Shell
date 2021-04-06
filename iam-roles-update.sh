@@ -24,7 +24,9 @@ PROJECT="$(gcloud config get-value project)"
 ROLE="editor"
 ROLE_TITLE="Role Editor"
 ROLE_DESCRIPTION="custom role description"
-ROLE_PERMISSIONS="storage.buckets.get,storage.buckets.list"
+ROLE_PERMISSIONS="\
+storage.buckets.get\
+,storage.buckets.list"
 ROLE_STAGE="ALPHA"
 
 
@@ -44,16 +46,18 @@ gcloud iam roles update "$ROLE" \
 ROLE_ETAG="BwVxLi4wTvk="
 
 
-cat << EOF | gcloud iam roles update "$ROLE" --project "$PROJECT" --file -
-description: "$ROLE_DESCRIPTION"
-etag: $ROLE_ETAG
-includedPermissions:
-- compute.instances.get
-- compute.instances.list
-- storage.buckets.get
-- storage.buckets.list
-name: projects/${PROJECT}/roles/${ROLE}
-stage: "$ROLE_STAGE"
-title: "$ROLE_TITLE"
-EOF
-## OR: gcloud iam roles update "$ROLE" --project "$PROJECT" --file role.yaml
+## write the following into the yaml file (e.g. role.yaml)
+##   description: "$ROLE_DESCRIPTION"
+##   etag: $ROLE_ETAG
+##   includedPermissions:
+##   - compute.instances.get
+##   - compute.instances.list
+##   - storage.buckets.get
+##   - storage.buckets.list
+##   name: projects/${PROJECT}/roles/${ROLE}
+##   stage: "$ROLE_STAGE"
+##   title: "$ROLE_TITLE"
+### See: iam-roles-defnition.yaml for how to create the config file
+gcloud iam roles update "$ROLE" \
+	--project "$PROJECT" \
+	--file iam-roles-definition.yaml

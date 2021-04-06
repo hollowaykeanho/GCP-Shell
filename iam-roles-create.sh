@@ -24,7 +24,9 @@ PROJECT="$(gcloud config get-value project)"
 ROLE="editor"
 ROLE_TITLE="Role Editor"
 ROLE_DESCRIPTION="custom role description"
-ROLE_PERMISSIONS="compute.instances.get,compute.instances.list"
+ROLE_PERMISSIONS="\
+compute.instances.get\
+,compute.instances.list"
 ROLE_STAGE="ALPHA"
 
 
@@ -38,16 +40,7 @@ gcloud iam roles create "$ROLE" \
 	--permissions "$ROLE_PERMISSIONS" \
 	--stage "$ROLE_STAGE"
 
-
-
-
-# creat from file
-cat << EOF | gcloud iam roles create "$ROLE" --project "$PROJECT" --file -
-title: "$ROLE_TITLE"
-description: "$ROLE_DESCRIPTION"
-stage: "$ROLE_STAGE"
-includedPermissions:
-- appengine.versions.create
-- appengine.versions.delete
-EOF
-## OR: gcloud iam roles create "$ROLE" --project "$PROJECT" --file role.yaml
+## OR: gcloud iam roles create "$ROLE" \
+##		--project "$PROJECT" \
+##		--file iam-roles-definition.yaml
+### See: iam-roles-defnition.yaml for how to create the config file
