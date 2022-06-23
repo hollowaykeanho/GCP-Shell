@@ -1,15 +1,21 @@
 # Google Cloud Platform Cloud Shell Notes
-These are the composite command notes developed overtime to record all their
-respective complicated processes. They are scripted in BASH script so that we
-can re-use them whenever needed.
+![banner](artwork/banner-1200x628.svg)
+
+These are the composite list of command notes developed overtime by interacting
+with Google Cloud Platform. The repository's purpose is to record all the
+commands for their implications and building new tools that is compatible with
+Google Cloud Platform.
+
+Most commands retained itself in `shell` or `bash` script format to preserve
+its originality.
 
 
 
 
-## How Did They Got Produced
+## When the Repository Started
 By directly pariticating and fulfills QwikLab training labs and challenge lab.
-From top to bottom, Qwiklab did prepares quite a good self-pace, developer
-oriented labs.
+From top to bottom, Qwiklab did prepares quite a good self-pace, **very hands-on**,
+developer oriented lab practices and challenges.
 
 To fulfill their challenges, you need to build up your own notes and construct
 your answer accordingly.
@@ -32,3 +38,10 @@ link them up in case anyone wants to refer to it in the future.
    https://github.com/GoogleCloudPlatform/gke-security-scenarios-demo
 5. AI Training Intro - See `self-paced-lab/ai-platform-qwikstart` -
    https://github.com/GoogleCloudPlatform/training-data-analyst
+
+
+
+
+## License
+This repository is licesed under MIT License (See [LICENSE](license) file)
+to promote further learning with Google Cloud Platform.
