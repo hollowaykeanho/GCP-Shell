@@ -1,5 +1,5 @@
 # Google Cloud Platform Cloud Shell Notes
-![banner](artwork/banner-1200x628.svg)
+![banner](.docs/artwork/banner-1200x628.svg)
 
 These are the composite list of command notes developed overtime by interacting
 with Google Cloud Platform. The repository's purpose is to record all the
